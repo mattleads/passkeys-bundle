@@ -16,7 +16,7 @@ The WebAuthn bundle gives you the cryptographic ceremonies. This bundle adds the
 | **Recovery codes** | Single-use offline codes with slow hashing + peppered lookup, a `RecoveryCodeAuthenticator` for your firewall, Doctrine storage included. |
 | **Last-used tracking** | Implement one interface on your credential entity; every successful assertion stamps `lastUsedAt`. |
 | **Management pages** | List, revoke, regenerate recovery codes — Twig templates you can override. |
-| **Stimulus controllers** | `hybrid-login`, `passkey`, `confirm` — no `alert()`, events for your own UI, works with AssetMapper (no Node). |
+| **Stimulus controllers** | `hybrid-login`, `passkey`, `confirm` — no `alert()`/`confirm()` dialogs, events for your own UI, works with AssetMapper (no Node). |
 
 ## Requirements
 
@@ -148,6 +148,12 @@ final class CredentialRepository implements CredentialRecordRepositoryInterface,
 ```
 
 Implement `CanDeleteCredentialRecord` to enable the **Revoke** button.
+
+**Pitfall:** the WebAuthn validators return a plain `Webauthn\CredentialRecord`, not your entity. If your entity extends
+`CredentialRecord` (the usual Doctrine setup), convert in `saveCredentialRecord()` — create your entity on registration,
+or update the existing row (counter, backup flags) after a login — otherwise Doctrine fails with *"has no identity/no id
+values set"*. The [demo application](https://github.com/mattleads/passkeys-demo) shows a minimal `fromRecord()` /
+`syncFrom()` pair.
 
 ### 3. (Optional) a credential entity that tracks usage
 
