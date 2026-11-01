@@ -60,7 +60,7 @@ final class MattLeadsPasskeysBundle extends AbstractBundle
         $recovery = $config['recovery'];
         /** @var array{enabled: bool} $usage */
         $usage = $config['usage_tracking'];
-        /** @var array{enabled: bool, route_prefix: string} $management */
+        /** @var array{enabled: bool, route_prefix: string, add_passkey: array{options_route: ?string, result_route: ?string}} $management */
         $management = $config['management'];
 
         $builder->setParameter('mattleads_passkeys.login_flow.enabled', $flow['enabled']);
@@ -116,8 +116,13 @@ final class MattLeadsPasskeysBundle extends AbstractBundle
         // --- management UI ----------------------------------------------------------------------------------------
         if (!$management['enabled']) {
             $builder->removeDefinition(PasskeyManagementController::class);
-        } elseif ($recovery['enabled']) {
-            $builder->getDefinition(PasskeyManagementController::class)->setArgument('$recoveryCodes', new Reference(RecoveryCodeManager::class));
+        } else {
+            $controller = $builder->getDefinition(PasskeyManagementController::class)
+                ->setArgument('$addPasskeyOptionsRoute', $management['add_passkey']['options_route'])
+                ->setArgument('$addPasskeyResultRoute', $management['add_passkey']['result_route']);
+            if ($recovery['enabled']) {
+                $controller->setArgument('$recoveryCodes', new Reference(RecoveryCodeManager::class));
+            }
         }
     }
 }

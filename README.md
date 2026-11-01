@@ -71,6 +71,9 @@ mattleads_passkeys:
     management:
         enabled: true
         route_prefix: /account/passkeys
+        add_passkey:                    # your firewall's WebAuthn registration routes → shows "Add a passkey"
+            options_route: webauthn.controller.security.main.creation.options
+            result_route: webauthn.controller.security.main.creation.result
 ```
 
 ### Firewall

@@ -41,6 +41,8 @@ final class PasskeyManagementController extends AbstractController
             'can_revoke' => $this->credentials instanceof CanDeleteCredentialRecord,
             'recovery_enabled' => null !== $this->recoveryCodes,
             'recovery_remaining' => $this->recoveryCodes?->remaining($user->getUserIdentifier()),
+            'add_passkey_options_url' => null !== $this->addPasskeyOptionsRoute ? $this->generateUrl($this->addPasskeyOptionsRoute) : null,
+            'add_passkey_result_url' => null !== $this->addPasskeyResultRoute ? $this->generateUrl($this->addPasskeyResultRoute) : null,
         ]);
     }
 

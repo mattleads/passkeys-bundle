@@ -35,7 +35,7 @@
 
     {% block add_passkey %}
         {# Wire this form to your firewall's registration endpoints (creation options/result with CurrentUserEntityGuesser). #}
-        {% if add_passkey_options_url is defined %}
+        {% if add_passkey_options_url and add_passkey_result_url %}
             <form data-controller="mattleads--passkeys-bundle--passkey"
                   data-mattleads--passkeys-bundle--passkey-options-url-value="{{ add_passkey_options_url }}"
                   data-mattleads--passkeys-bundle--passkey-result-url-value="{{ add_passkey_result_url }}"

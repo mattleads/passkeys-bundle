@@ -79,6 +79,8 @@ return static function (ContainerConfigurator $container): void {
             '$users' => service(PublicKeyCredentialUserEntityRepositoryInterface::class),
             '$credentials' => service(CredentialRecordRepositoryInterface::class),
             '$recoveryCodes' => null,
+            '$addPasskeyOptionsRoute' => null,
+            '$addPasskeyResultRoute' => null,
         ])
         ->autowire()
         ->tag('controller.service_arguments')
