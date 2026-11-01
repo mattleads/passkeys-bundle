@@ -29,6 +29,8 @@ final class PasskeyManagementController extends AbstractController
         private readonly PublicKeyCredentialUserEntityRepositoryInterface $users,
         private readonly CredentialRecordRepositoryInterface $credentials,
         private readonly ?RecoveryCodeManager $recoveryCodes = null,
+        private readonly ?string $addPasskeyOptionsRoute = null,
+        private readonly ?string $addPasskeyResultRoute = null,
     ) {}
 
     public function index(): Response
