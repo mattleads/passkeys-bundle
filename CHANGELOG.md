@@ -4,7 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
-## [0.1.0] - TBD
+[Unreleased]: https://github.com/mattleads/passkeys-bundle/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mattleads/passkeys-bundle/releases/tag/v0.1.0
+
+## [0.1.0] - 2026-11-01
 
 ### Added
 - `LoginFlowController`: passkey-or-password decision endpoint with anti-enumeration default.
