@@ -1,0 +1,15 @@
+{% extends '@MattLeadsPasskeys/layout.html.twig' %}
+{% block title %}Sign in with a recovery code{% endblock %}
+{% block body %}
+    <h1>Sign in with a recovery code</h1>
+    <p>Use one of the single-use codes you saved when you set up passkeys. The code is consumed once used.</p>
+    {% if error %}<p class="passkeys-error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>{% endif %}
+    <form method="post">
+        <label for="recovery-identifier">Email or username</label>
+        <input id="recovery-identifier" type="text" name="_identifier" value="{{ last_identifier }}" autocomplete="username" required autofocus>
+        <label for="recovery-code">Recovery code</label>
+        <input id="recovery-code" type="text" name="_recovery_code" autocomplete="one-time-code" inputmode="text" spellcheck="false" required placeholder="XXXXX-XXXXX">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_id) }}">
+        <button type="submit">Sign in</button>
+    </form>
+{% endblock %}

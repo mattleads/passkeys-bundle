@@ -1,0 +1,69 @@
+{
+    "name": "mattleads/passkeys-bundle",
+    "description": "Batteries-included passkeys for Symfony: hybrid passkey/password login flow, conditional-UI autofill, passkey management, last-used tracking and offline recovery codes on top of web-auth/webauthn-symfony-bundle.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "keywords": ["symfony", "passkeys", "webauthn", "fido2", "passwordless", "authentication", "recovery-codes", "stimulus", "security"],
+    "authors": [
+        { "name": "Matvei (Matt) Mochalkin", "email": "matthew.mochalkin@gmail.com", "homepage": "https://github.com/mattleads" }
+    ],
+    "homepage": "https://github.com/mattleads/passkeys-bundle",
+    "support": {
+        "issues": "https://github.com/mattleads/passkeys-bundle/issues",
+        "source": "https://github.com/mattleads/passkeys-bundle"
+    },
+    "require": {
+        "php": ">=8.2",
+        "psr/clock": "^1.0",
+        "symfony/config": "^6.4|^7.0|^8.0",
+        "symfony/dependency-injection": "^6.4|^7.0|^8.0",
+        "symfony/event-dispatcher": "^6.4|^7.0|^8.0",
+        "symfony/framework-bundle": "^6.4|^7.0|^8.0",
+        "symfony/http-foundation": "^6.4|^7.0|^8.0",
+        "symfony/http-kernel": "^6.4|^7.0|^8.0",
+        "symfony/password-hasher": "^6.4|^7.0|^8.0",
+        "symfony/routing": "^6.4|^7.0|^8.0",
+        "symfony/security-bundle": "^6.4|^7.0|^8.0",
+        "symfony/security-http": "^6.4|^7.0|^8.0",
+        "symfony/serializer": "^6.4|^7.0|^8.0",
+        "web-auth/webauthn-symfony-bundle": "^5.2"
+    },
+    "require-dev": {
+        "doctrine/doctrine-bundle": "^2.13|^3.0",
+        "doctrine/orm": "^3.3",
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "symfony/clock": "^6.4|^7.0|^8.0",
+        "symfony/twig-bundle": "^6.4|^7.0|^8.0",
+        "symfony/uid": "^6.4|^7.0|^8.0",
+        "symfony/yaml": "^6.4|^7.0|^8.0"
+    },
+    "suggest": {
+        "doctrine/orm": "To use the bundled Doctrine storage for recovery codes.",
+        "symfony/twig-bundle": "To use the bundled, overridable Twig templates.",
+        "symfony/asset-mapper": "To load the bundled Stimulus controllers without Node.",
+        "symfony/stimulus-bundle": "To auto-register the bundled Stimulus controllers."
+    },
+    "autoload": {
+        "psr-4": { "MattLeads\\PasskeysBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "MattLeads\\PasskeysBundle\\Tests\\": "tests/" }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": { "php-http/discovery": false }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "stan": "phpstan analyse",
+        "cs": "php-cs-fixer fix --dry-run --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "check": ["@cs", "@stan", "@test"]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

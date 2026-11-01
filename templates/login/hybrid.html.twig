@@ -1,0 +1,50 @@
+{#
+  Hybrid login form: one identifier field; the Stimulus controller asks the flow endpoint whether to start a
+  passkey ceremony or reveal a password field. Include it from your own login template:
+
+    {{ include('@MattLeadsPasskeys/login/hybrid.html.twig', {
+        login_check_path: path('app_login'),
+        options_url: path('webauthn.controller.security.main.request.options'),
+        result_url:  path('webauthn.controller.security.main.request.result'),
+        flow_url:    path('mattleads_passkeys_login_flow'),
+        recovery_url: path('mattleads_passkeys_recovery_login'),
+        csrf_token: csrf_token('authenticate'),
+        last_identifier: last_username|default(''),
+        error: error|default(null),
+    }) }}
+#}
+<form method="post" action="{{ login_check_path }}"
+      data-controller="mattleads--passkeys-bundle--hybrid-login"
+      data-mattleads--passkeys-bundle--hybrid-login-flow-url-value="{{ flow_url }}"
+      data-mattleads--passkeys-bundle--hybrid-login-options-url-value="{{ options_url }}"
+      data-mattleads--passkeys-bundle--hybrid-login-result-url-value="{{ result_url }}"
+      data-action="submit->mattleads--passkeys-bundle--hybrid-login#submit">
+
+    {% if error is defined and error %}
+        <p class="passkeys-error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+    {% endif %}
+    <p class="passkeys-error" role="alert" hidden data-mattleads--passkeys-bundle--hybrid-login-target="error"></p>
+
+    <label for="passkeys-identifier">Email or username</label>
+    <input id="passkeys-identifier" type="text" name="_username" value="{{ last_identifier|default('') }}"
+           autocomplete="username webauthn" required autofocus
+           data-mattleads--passkeys-bundle--hybrid-login-target="identifier">
+
+    <div hidden data-mattleads--passkeys-bundle--hybrid-login-target="passwordContainer">
+        <label for="passkeys-password">Password</label>
+        <input id="passkeys-password" type="password" name="_password" autocomplete="current-password"
+               data-mattleads--passkeys-bundle--hybrid-login-target="password">
+    </div>
+
+    {% if csrf_token is defined %}<input type="hidden" name="_csrf_token" value="{{ csrf_token }}">{% endif %}
+
+    <button type="submit" data-mattleads--passkeys-bundle--hybrid-login-target="continueButton">Continue</button>
+    <button type="submit" hidden data-mattleads--passkeys-bundle--hybrid-login-target="loginButton">Sign in</button>
+
+    <p hidden data-mattleads--passkeys-bundle--hybrid-login-target="passwordFallback">
+        <a href="#" data-action="click->mattleads--passkeys-bundle--hybrid-login#usePassword">Use my password instead</a>
+    </p>
+    {% if recovery_url is defined %}
+        <p><a href="{{ recovery_url }}">Lost access to your passkeys? Use a recovery code</a></p>
+    {% endif %}
+</form>

@@ -1,0 +1,10 @@
+{% extends '@MattLeadsPasskeys/layout.html.twig' %}
+{% block title %}Your new recovery codes{% endblock %}
+{% block body %}
+    <h1>Your new recovery codes</h1>
+    <p><strong>Save these now.</strong> Each code works once and they will not be shown again. Store them somewhere offline, away from the devices that hold your passkeys.</p>
+    <ul class="passkeys-recovery-codes">
+        {% for code in codes %}<li><code>{{ code }}</code></li>{% endfor %}
+    </ul>
+    <p><a href="{{ path('mattleads_passkeys_manage') }}">Back to your passkeys</a></p>
+{% endblock %}

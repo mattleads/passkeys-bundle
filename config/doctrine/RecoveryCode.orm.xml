@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="MattLeads\PasskeysBundle\Recovery\RecoveryCode" table="passkeys_recovery_code">
+        <unique-constraints>
+            <unique-constraint columns="user_identifier,lookup_key" name="uniq_passkeys_recovery_lookup"/>
+        </unique-constraints>
+        <indexes>
+            <index columns="user_identifier" name="idx_passkeys_recovery_user"/>
+        </indexes>
+        <id name="id" type="integer"><generator strategy="AUTO"/></id>
+        <field name="userIdentifier" column="user_identifier" type="string" length="180"/>
+        <field name="lookupKey" column="lookup_key" type="string" length="32"/>
+        <field name="codeHash" column="code_hash" type="string" length="255"/>
+        <field name="createdAt" column="created_at" type="datetime_immutable"/>
+        <field name="usedAt" column="used_at" type="datetime_immutable" nullable="true"/>
+    </entity>
+</doctrine-mapping>

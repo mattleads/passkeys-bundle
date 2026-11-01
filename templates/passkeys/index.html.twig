@@ -1,0 +1,58 @@
+{% extends '@MattLeadsPasskeys/layout.html.twig' %}
+{% block title %}Your passkeys{% endblock %}
+{% block body %}
+    <h1>Your passkeys</h1>
+
+    {% for message in app.flashes('success') %}<p class="passkeys-flash">{{ message }}</p>{% endfor %}
+
+    {% if credentials is empty %}
+        <p>You have not registered a passkey yet.</p>
+    {% else %}
+        <table>
+            <thead><tr><th>Credential</th><th>Transports</th><th>Backed up</th><th>Last used</th>{% if can_revoke %}<th></th>{% endif %}</tr></thead>
+            <tbody>
+            {% for credential in credentials %}
+                {% set id = credential.publicKeyCredentialId|mattleads_passkeys_base64url %}
+                <tr>
+                    <td><code title="{{ id }}">{{ id|slice(0, 12) }}…</code><br><small>{{ credential.aaguid }}</small></td>
+                    <td>{{ credential.transports|join(', ')|default('—') }}</td>
+                    <td>{{ credential.backupStatus is same as(true) ? 'yes' : (credential.backupStatus is same as(false) ? 'no' : '—') }}</td>
+                    <td>{{ credential.lastUsedAt is defined and credential.lastUsedAt ? credential.lastUsedAt|date('Y-m-d H:i') : 'never' }}</td>
+                    {% if can_revoke %}
+                        <td>
+                            <form method="post" action="{{ path('mattleads_passkeys_revoke') }}" data-controller="mattleads--passkeys-bundle--confirm" data-action="submit->mattleads--passkeys-bundle--confirm#confirm">
+                                <input type="hidden" name="credential_id" value="{{ id }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('passkeys_revoke') }}">
+                                <button type="submit">Revoke</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% block add_passkey %}
+        {# Wire this form to your firewall's registration endpoints (creation options/result with CurrentUserEntityGuesser). #}
+        {% if add_passkey_options_url is defined %}
+            <form data-controller="mattleads--passkeys-bundle--passkey"
+                  data-mattleads--passkeys-bundle--passkey-options-url-value="{{ add_passkey_options_url }}"
+                  data-mattleads--passkeys-bundle--passkey-result-url-value="{{ add_passkey_result_url }}"
+                  data-mattleads--passkeys-bundle--passkey-mode-value="register"
+                  data-action="submit->mattleads--passkeys-bundle--passkey#submit">
+                <p class="passkeys-error" role="alert" hidden data-mattleads--passkeys-bundle--passkey-target="error"></p>
+                <button type="submit">Add a passkey to this device</button>
+            </form>
+        {% endif %}
+    {% endblock %}
+
+    {% if recovery_enabled %}
+        <h2>Recovery codes</h2>
+        <p>{{ recovery_remaining }} unused code{{ recovery_remaining == 1 ? '' : 's' }} left. Generating a new set invalidates the old one.</p>
+        <form method="post" action="{{ path('mattleads_passkeys_recovery_codes') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('passkeys_recovery_codes') }}">
+            <button type="submit">Generate new recovery codes</button>
+        </form>
+    {% endif %}
+{% endblock %}
