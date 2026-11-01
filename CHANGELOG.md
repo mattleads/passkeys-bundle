@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-01
+
 ### Added
 - `management.add_passkey.{options_route,result_route}`: optional "Add a passkey" form on the management page.
 - AssetMapper path registration for the bundled Stimulus controllers (UX package convention).
@@ -12,7 +14,8 @@ All notable changes to this project are documented here. The format follows [Kee
 - `confirm` controller uses a two-step arm/confirm pattern instead of `window.confirm()`.
 - README: "Add a passkey" is wired through `webauthn.controllers.creation` + `CurrentUserEntityGuesser`; documented the CredentialRecord → entity conversion pitfall.
 
-[Unreleased]: https://github.com/mattleads/passkeys-bundle/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mattleads/passkeys-bundle/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/mattleads/passkeys-bundle/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mattleads/passkeys-bundle/releases/tag/v0.1.0
 
 ## [0.1.0] - 2026-11-01
