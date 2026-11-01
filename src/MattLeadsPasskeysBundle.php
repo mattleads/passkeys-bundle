@@ -13,6 +13,7 @@ use MattLeads\PasskeysBundle\Recovery\RecoveryCodeManager;
 use MattLeads\PasskeysBundle\Recovery\RecoveryCodeStorageInterface;
 use MattLeads\PasskeysBundle\Security\RecoveryCodeAuthenticator;
 use MattLeads\PasskeysBundle\Usage\CredentialUsageSubscriber;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -30,6 +31,16 @@ final class MattLeadsPasskeysBundle extends AbstractBundle
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {
+        // Expose the Stimulus controllers to AssetMapper under the UX package name, so StimulusBundle can load
+        // "@mattleads/passkeys-bundle" controllers declared in assets/controllers.json without a Node build.
+        if ($this->isAssetMapperAvailable($builder)) {
+            $container->extension('framework', [
+                'asset_mapper' => [
+                    'paths' => [\dirname(__DIR__) . '/assets/dist' => '@mattleads/passkeys-bundle/dist'],
+                ],
+            ]);
+        }
+
         // Register the recovery-code mapping whenever Doctrine ORM is around; it is inert if the Doctrine storage is not used.
         if ($builder->hasExtension('doctrine')) {
             $container->extension('doctrine', [
@@ -45,6 +56,17 @@ final class MattLeadsPasskeysBundle extends AbstractBundle
                 ],
             ]);
         }
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $builder): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class) || !$builder->hasParameter('kernel.bundles_metadata')) {
+            return false;
+        }
+        /** @var array<string, array{path: string}> $bundlesMetadata */
+        $bundlesMetadata = $builder->getParameter('kernel.bundles_metadata');
+
+        return isset($bundlesMetadata['FrameworkBundle']) && is_file($bundlesMetadata['FrameworkBundle']['path'] . '/Resources/config/asset_mapper.php');
     }
 
     /**
