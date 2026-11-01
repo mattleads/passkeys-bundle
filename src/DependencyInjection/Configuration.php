@@ -65,7 +65,7 @@ final class Configuration
                         ->booleanNode('enabled')->defaultTrue()->end()
                         ->scalarNode('route_prefix')->defaultValue('/account/passkeys')->cannotBeEmpty()->end()
                         ->arrayNode('add_passkey')
-                            ->info('Route names of your firewall\'s WebAuthn *registration* endpoints (webauthn.controller.security.<firewall>.creation.options / .result). When set, the management page shows an "Add a passkey" button.')
+                            ->info('Route names of the WebAuthn bundle\'s creation controllers configured with CurrentUserEntityGuesser (webauthn.controller.creation.request.<name> / .response.<name>). When set, the management page shows an "Add a passkey" button.')
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('options_route')->defaultNull()->end()

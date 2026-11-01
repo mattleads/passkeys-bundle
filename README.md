@@ -71,12 +71,12 @@ mattleads_passkeys:
     management:
         enabled: true
         route_prefix: /account/passkeys
-        add_passkey:                    # your firewall's WebAuthn registration routes → shows "Add a passkey"
-            options_route: webauthn.controller.security.main.creation.options
-            result_route: webauthn.controller.security.main.creation.result
+        add_passkey:                    # WebAuthn creation-controller routes → shows "Add a passkey" (see below)
+            options_route: webauthn.controller.creation.request.add_passkey
+            result_route: webauthn.controller.creation.response.add_passkey
 ```
 
-### Firewall
+### Firewall and WebAuthn endpoints
 
 ```yaml
 # config/packages/security.yaml
@@ -85,20 +85,44 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            form_login:                      # password login (optional — remove for passwordless-only)
+            entry_point: form_login
+            form_login:                      # password half of the hybrid form (remove for passwordless-only)
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
             webauthn:                        # from web-auth/webauthn-symfony-bundle
                 authentication:
                     routes: { options_path: /login/passkey/options, result_path: /login/passkey/result }
-                registration:
-                    enabled: true
-                    routes: { options_path: /account/passkeys/options, result_path: /account/passkeys/result }
             custom_authenticators:
                 - MattLeads\PasskeysBundle\Security\RecoveryCodeAuthenticator
             login_throttling: ~              # strongly recommended: recovery codes are short
             logout: { path: app_logout }
+```
+
+To let a **logged-in user add a passkey**, use the WebAuthn bundle's standalone creation controllers with the
+current-user guesser. (The firewall's `registration:` block always reads the username from the request body — it is
+for passwordless sign-up, not for adding a passkey to an existing account.)
+
+```yaml
+# config/packages/webauthn.yaml
+webauthn:
+    controllers:
+        enabled: true
+        creation:
+            add_passkey:
+                options_path: /account/passkeys/add/options
+                result_path: /account/passkeys/add/result
+                user_entity_guesser: Webauthn\Bundle\Security\Guesser\CurrentUserEntityGuesser
+                profile: default
+```
+
+```yaml
+# config/packages/mattleads_passkeys.yaml
+mattleads_passkeys:
+    management:
+        add_passkey:
+            options_route: webauthn.controller.creation.request.add_passkey
+            result_route: webauthn.controller.creation.response.add_passkey
 ```
 
 The authenticator uses the normal Passport flow, so login throttling, user checkers, remember-me and CSRF all apply.
@@ -194,6 +218,10 @@ Bring your own storage by implementing `RecoveryCodeStorageInterface` and settin
 * Enable `login_throttling` on the firewall. A 10-character Crockford code has ~50 bits of entropy; throttling makes online guessing irrelevant.
 * Revocation and recovery-code regeneration are CSRF-protected POSTs (`passkeys_revoke`, `passkeys_recovery_codes`).
 * WebAuthn requires a secure context: HTTPS everywhere except `localhost`.
+
+## Demo application
+
+A runnable end-to-end example (password sign-up, hybrid login, add/revoke passkeys, recovery codes, throttling) lives in [`mattleads/passkeys-demo`](https://github.com/mattleads/passkeys-demo).
 
 ## Testing
 
